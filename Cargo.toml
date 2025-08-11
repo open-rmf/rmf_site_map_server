@@ -6,7 +6,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = {version = "1", features = ["backtrace"]}
-rmf_site_format = { git = "https://github.com/open-rmf/rmf_site", branch = "luca/export_sdf" }
+rmf_site_format = { git = "https://github.com/open-rmf/rmf_site", branch = "main" }
 
 [[bin]]
 name = "building_map_server"

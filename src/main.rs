@@ -1,4 +1,4 @@
-use rclrs::{QoSDurabilityPolicy, QoSHistoryPolicy, QoSReliabilityPolicy};
+use rclrs::*;
 use rmf_site_format::{AssetSource, Category, DoorType, LiftCabin, Rotation, Side, Site, Swing};
 use std::env;
 use std::path::{Path, PathBuf};
@@ -189,25 +189,26 @@ fn main() -> Result<(), Error> {
         )?;
         building_map.to_site()?
     } else if map_path.ends_with(".site.ron") {
-        rmf_site_format::Site::from_bytes(&std::fs::read(map_path)?)?
+        rmf_site_format::Site::from_bytes_ron(&std::fs::read(map_path)?)?
+    } else if map_path.ends_with(".site.json") {
+        rmf_site_format::Site::from_bytes_json(&std::fs::read(map_path)?)?
     } else {
         panic!("Unsupported file type {map_path}");
     };
-    let context = rclrs::Context::new(env::args())?;
+    let context = Context::default_from_env()?;
+    let mut executor = context.create_basic_executor();
 
-    let node = rclrs::create_node(&context, "rmf_building_map_server_rs")?;
+    let node = executor.create_node("rmf_building_map_server_rs")?;
 
-    let mut qos = rclrs::QOS_PROFILE_DEFAULT;
-    qos.history = QoSHistoryPolicy::KeepLast { depth: 1 };
-    qos.reliability = QoSReliabilityPolicy::Reliable;
-    qos.durability = QoSDurabilityPolicy::TransientLocal;
-
-    let publisher = node.create_publisher::<rmf_building_map_msgs::msg::BuildingMap>("map", qos)?;
+    let publisher = node.create_publisher::<rmf_building_map_msgs::msg::BuildingMap>(
+        "map".transient_local().keep_last(1).reliable(),
+    )?;
 
     let site_folder = PathBuf::from(map_path);
     let site_folder = site_folder.parent().unwrap();
     let map = get_map_msg(&site, site_folder);
 
     publisher.publish(map)?;
-    rclrs::spin(node).map_err(|err| err.into())
+    executor.spin(SpinOptions::default()).first_error()?;
+    Ok(())
 }
