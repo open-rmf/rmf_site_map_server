@@ -1,5 +1,8 @@
 use rclrs::*;
-use rmf_site_format::{AssetSource, Category, DoorType, LiftCabin, Rotation, Side, Site, Swing};
+use rmf_site_format::{
+    legacy::nav_graph::NavGraph, AssetSource, Category, DoorType, LiftCabin, Rotation, Side, Site,
+    Swing,
+};
 use std::env;
 use std::path::{Path, PathBuf};
 
@@ -33,6 +36,8 @@ fn get_map_msg(site: &Site, map_folder: &Path) -> rmf_building_map_msgs::msg::Bu
             }
         }
     }
+
+    let site_nav_graphs = NavGraph::from_site(site);
 
     for level in site.levels.values() {
         let mut doors = Vec::new();
@@ -160,13 +165,114 @@ fn get_map_msg(site: &Site, map_folder: &Path) -> rmf_building_map_msgs::msg::Bu
                 yaw: angle.radians(),
             });
         }
+        let mut nav_graphs = Vec::new();
+        // The message sorts nav graphs in levels, but the exported struct
+        // sorts them by graph, so we iterate over levels and add the level's nav graph
+        // entry if present
+        for (graph_name, graph) in &site_nav_graphs {
+            let Some(nav_level) = graph.levels.get(&level.properties.name.0) else {
+                continue;
+            };
+            let mut vertices = Vec::new();
+            let mut edges = Vec::new();
+            for vertex in &nav_level.vertices {
+                let mut params = Vec::new();
+                if vertex.2.is_charger {
+                    params.push(rmf_building_map_msgs::msg::Param {
+                        name: "is_charger".into(),
+                        type_: rmf_building_map_msgs::msg::Param::TYPE_BOOL,
+                        value_bool: true,
+                        ..Default::default()
+                    });
+                }
+                if vertex.2.is_holding_point {
+                    params.push(rmf_building_map_msgs::msg::Param {
+                        name: "is_holding_point".into(),
+                        type_: rmf_building_map_msgs::msg::Param::TYPE_BOOL,
+                        value_bool: true,
+                        ..Default::default()
+                    });
+                }
+                if vertex.2.is_parking_spot {
+                    params.push(rmf_building_map_msgs::msg::Param {
+                        name: "is_parking_spot".into(),
+                        type_: rmf_building_map_msgs::msg::Param::TYPE_BOOL,
+                        value_bool: true,
+                        ..Default::default()
+                    });
+                }
+                if let Some(lift_name) = &vertex.2.lift {
+                    params.push(rmf_building_map_msgs::msg::Param {
+                        name: "lift".into(),
+                        type_: rmf_building_map_msgs::msg::Param::TYPE_STRING,
+                        value_string: lift_name.clone(),
+                        ..Default::default()
+                    });
+                }
+                vertices.push(rmf_building_map_msgs::msg::GraphNode {
+                    x: vertex.0,
+                    y: vertex.1,
+                    name: vertex.2.name.clone(),
+                    params,
+                });
+            }
+
+            for lane in &nav_level.lanes {
+                let mut params = Vec::new();
+                if lane.2.speed_limit != 0.0 {
+                    params.push(rmf_building_map_msgs::msg::Param {
+                        name: "speed_limit".into(),
+                        type_: rmf_building_map_msgs::msg::Param::TYPE_DOUBLE,
+                        value_float: lane.2.speed_limit,
+                        ..Default::default()
+                    });
+                }
+                if let Some(dock_name) = &lane.2.dock_name {
+                    params.push(rmf_building_map_msgs::msg::Param {
+                        name: "dock_name".into(),
+                        type_: rmf_building_map_msgs::msg::Param::TYPE_STRING,
+                        value_string: dock_name.clone(),
+                        ..Default::default()
+                    });
+                }
+                if let Some(door_name) = &lane.2.door_name {
+                    params.push(rmf_building_map_msgs::msg::Param {
+                        name: "door_name".into(),
+                        type_: rmf_building_map_msgs::msg::Param::TYPE_STRING,
+                        value_string: door_name.clone(),
+                        ..Default::default()
+                    });
+                }
+                if let Some(orientation_constraint) = &lane.2.orientation_constraint {
+                    params.push(rmf_building_map_msgs::msg::Param {
+                        name: "orientation_constraint".into(),
+                        type_: rmf_building_map_msgs::msg::Param::TYPE_STRING,
+                        value_string: orientation_constraint.clone(),
+                        ..Default::default()
+                    });
+                }
+                // All lanes are unidirectional in the site editor
+                edges.push(rmf_building_map_msgs::msg::GraphEdge {
+                    v1_idx: lane.0 as u32,
+                    v2_idx: lane.1 as u32,
+                    params,
+                    edge_type: rmf_building_map_msgs::msg::GraphEdge::EDGE_TYPE_UNIDIRECTIONAL,
+                });
+            }
+            nav_graphs.push(rmf_building_map_msgs::msg::Graph {
+                name: graph_name.clone(),
+                vertices,
+                edges,
+                params: vec![],
+            });
+        }
         levels.push(rmf_building_map_msgs::msg::Level {
             name: level.properties.name.0.clone(),
             elevation: level.properties.elevation.0,
             images,
             places: vec![],
             doors,
-            nav_graphs: vec![],
+            nav_graphs,
             wall_graph: Default::default(),
         });
     }
