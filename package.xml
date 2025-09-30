@@ -13,6 +13,7 @@
   <build_depend>rosidl_runtime_rs</build_depend>
   <build_depend>service_msgs</build_depend>
   <build_depend>rmf_building_map_msgs</build_depend>
+  <build_depend>test_msgs</build_depend>
 
   <exec_depend>rclrs</exec_depend>
   <exec_depend>rosidl_runtime_rs</exec_depend>
