@@ -1,5 +1,5 @@
 [package]
-name = "rmf_building_map_server_rs"
+name = "rmf_site_map_server"
 version = "0.4.1"
 authors = ["Luca Della Vedova <lucadv@intrinsic.ai>"]
 edition = "2021"
@@ -9,7 +9,7 @@ anyhow = {version = "1", features = ["backtrace"]}
 rmf_site_format = { git = "https://github.com/open-rmf/rmf_site", branch = "main" }
 
 [[bin]]
-name = "building_map_server"
+name = "site_map_server"
 path = "src/main.rs"
 
 [dependencies.rclrs]

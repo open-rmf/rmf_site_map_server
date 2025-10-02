@@ -3,9 +3,9 @@
    href="http://download.ros.org/schema/package_format3.xsd"
    schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>rmf_building_map_server_rs</name>
+  <name>rmf_site_map_server</name>
   <version>0.0.1</version>
-  <description>Building map server</description>
+  <description>Site map server</description>
   <maintainer email="lucadv@intrinsic.ai">Luca Della Vedova</maintainer>
   <license>Apache License 2.0</license>
 
