@@ -13,10 +13,8 @@ name = "site_map_server"
 path = "src/main.rs"
 
 [dependencies.rclrs]
-version = "0.5"
-
-[dependencies.rosidl_runtime_rs]
-version = "0.4"
+git = "https://github.com/mxgrey/ros2_rust"
+branch = "crossflow"
 
 [dependencies.rmf_building_map_msgs]
 version = "*"
