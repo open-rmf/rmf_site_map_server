@@ -294,8 +294,6 @@ fn main() -> Result<(), Error> {
             &std::fs::read(map_path)?,
         )?;
         building_map.to_site()?
-    } else if map_path.ends_with(".site.ron") {
-        rmf_site_format::Site::from_bytes_ron(&std::fs::read(map_path)?)?
     } else if map_path.ends_with(".site.json") {
         rmf_site_format::Site::from_bytes_json(&std::fs::read(map_path)?)?
     } else {
