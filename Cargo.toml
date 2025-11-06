@@ -6,17 +6,17 @@ edition = "2021"
 
 [dependencies]
 anyhow = {version = "1", features = ["backtrace"]}
-rmf_site_format = { git = "https://github.com/open-rmf/rmf_site", branch = "main" }
+rmf_site_format = "0.0.2"
 
 [[bin]]
 name = "site_map_server"
 path = "src/main.rs"
 
 [dependencies.rclrs]
-version = "0.5"
+version = "0.6"
 
 [dependencies.rosidl_runtime_rs]
-version = "0.4"
+version = "0.5"
 
 [dependencies.rmf_building_map_msgs]
 version = "*"
