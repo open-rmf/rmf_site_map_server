@@ -6,7 +6,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = {version = "1", features = ["backtrace"]}
-rmf_site_format = { git = "https://github.com/open-rmf/rmf_site", branch = "main" }
+rmf_site_format = "0.0.2"
 
 [[bin]]
 name = "site_map_server"
@@ -14,6 +14,10 @@ path = "src/main.rs"
 
 [dependencies.rclrs]
 git = "https://github.com/mxgrey/ros2_rust"
+branch = "crossflow"
+
+[dependencies.rosidl_runtime_rs]
+git = "https://github.com/mxgrey/rosidl_runtime_rs"
 branch = "crossflow"
 
 [dependencies.rmf_building_map_msgs]
