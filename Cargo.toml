@@ -14,11 +14,11 @@ path = "src/main.rs"
 
 [dependencies.rclrs]
 git = "https://github.com/mxgrey/ros2_rust"
-branch = "crossflow"
+rev = "a8de85b"
 
 [dependencies.rosidl_runtime_rs]
 git = "https://github.com/mxgrey/rosidl_runtime_rs"
-branch = "crossflow"
+rev = "cfe5ea0"
 
 [dependencies.rmf_building_map_msgs]
 version = "*"
