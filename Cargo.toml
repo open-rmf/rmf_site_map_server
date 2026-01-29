@@ -13,10 +13,10 @@ name = "site_map_server"
 path = "src/main.rs"
 
 [dependencies.rclrs]
-version = "0.6"
+version = "0.7"
 
 [dependencies.rosidl_runtime_rs]
-version = "0.5"
+version = "0.6"
 
 [dependencies.rmf_building_map_msgs]
 version = "*"
