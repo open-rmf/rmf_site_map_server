@@ -10,5 +10,5 @@ Afterwards rebuild your workspace and run the node:
 ```
 colcon build --packages-up-to rmf_site_map_server
 source install/setup.bash
-ros2 run rmf_site_map_server site_map_server path_to_site_file.site.ron
+ros2 run rmf_site_map_server site_map_server path_to_site_file.site.json
 ```
