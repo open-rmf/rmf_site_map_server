@@ -15,11 +15,5 @@ path = "src/main.rs"
 [dependencies.rclrs]
 version = "0.7"
 
-[dependencies.rosidl_runtime_rs]
-version = "0.6"
-
-[dependencies.rmf_building_map_msgs]
-version = "*"
-
-[dependencies.service_msgs]
-version = "*"
+[dependencies.ros-env]
+version = "0.2"
