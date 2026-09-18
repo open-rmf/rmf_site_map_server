@@ -13,7 +13,8 @@ name = "site_map_server"
 path = "src/main.rs"
 
 [dependencies.rclrs]
-version = "0.7"
+git = "https://github.com/ros2-rust/ros2_rust"
+rev = "d27a8cb9ccea23446c0e37fe56ba2623ade892af"
 
 [dependencies.ros-env]
 version = "0.2"
